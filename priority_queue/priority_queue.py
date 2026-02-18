@@ -4,7 +4,7 @@
 
 # In a normal queue, you insert items, and they are removed in first-in, first-out order (FIFO).
 # In a priority queue, you insert an arbitrary object AND a priority value for that item.
-# When an item is requested, the item with the lowest priority value is returned (and removed).
+# When an item is requested, the item with the lowest priority value is returned (and removed). ***
 # Read more: https://en.wikipedia.org/wiki/Priority_queue
 
 # Fundamental to the Priority Queue is the "Heap" data structure.
@@ -52,38 +52,86 @@ class MinHeap:
     def peek(self):
         # TODO: Return (priority, item) but do NOT remove
         # If empty, return None (or raise an error)
-        pass
+        if self.is_empty():
+            return None
+        return self.data[0]
 
     def add(self, priority, item):
         # TODO: Add (priority, item) to end of list
         # Then bubble it UP into correct position
-        pass
+
+        self.data.append((priority, item))
+        self._bubble_up(len(self.data) - 1) #bubbling up the last item.
 
     def pop_min(self):
         # TODO: Remove and return the smallest element (priority, item)
         # Steps:
         # 1) swap root with last element
-        # 2) pop last element (former root)
+        # 2) pop last element (former root) --> I thought: why not remove index 0 without switching?
+        # Turns out, in order to keep the heap structure like above, it would take O(n). Heaps must keep
+        # the tree complete, and remove the end when returning -- with restoring O(log n)
         # 3) bubble DOWN new root
-        pass
+
+        if self.is_empty():
+            return None
+
+        last = len(self.data) - 1
+        temp = self.data[0]
+        self.data[0] = self.data[last]
+        self.data[last] = temp
+
+        minimum = self.data.pop() #last element
+
+        if not self.is_empty():
+            self._bubble_down(0) #bubble down new root
+
+        return minimum
 
     def _bubble_up(self, idx):
         # TODO: Implement
         # Keep swapping this node with its parent while it has a smaller priority.
         # parent index = (idx - 1) // 2
         # Stop when you reach the root OR parent already has <= priority.
-        pass
+        
+        parent = (idx - 1) // 2
+        while idx > 0 and self.data[parent][0] > self.data[idx][0]:
+            temp = self.data[idx]
+            self.data[idx] = self.data[parent]
+            self.data[parent] = temp
+            idx = parent
+            parent = (idx - 1) // 2
 
     def _bubble_down(self, idx):
         # Keep swapping this node downward until the heap property is restored.
         # left child = 2*idx + 1, right child = 2*idx + 2
         # Find the smaller child, then swap if current priority is bigger.
         # Stop when no children exist OR current is <= both children.
-        pass
 
+        n = len(self.data)
+        while True:
+            
+            left = 2*idx + 1
+            right = 2*idx + 2
+
+            if left >= n:
+                break #no children exist
+
+            smaller = left
+            if right < n and self.data[right][0] < self.data[left][0]:
+                smaller = right #comparison for smaller child
+
+            if self.data[idx][0] <= self.data[smaller][0]:
+                break #fulfilling heap attribute (before switching positions, check if its already "heap-ed"
+
+            temp = self.data[smaller]
+            self.data[smaller] = self.data[idx]
+            self.data[idx] = temp
+
+            idx = smaller
 
 # Once you have a min heap, the priority queue is pretty straightforward. 
 # Make sure you understand what it is doing
+# tell me if im wrong but pqueue is basically the behavior (always remove smallest priority) -- but minheap is the tool to do so.
 
 class PriorityQueue:
     def __init__(self):
