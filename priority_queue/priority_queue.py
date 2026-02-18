@@ -109,7 +109,6 @@ class MinHeap:
 
         n = len(self.data)
         while True:
-            
             left = 2*idx + 1
             right = 2*idx + 2
 
