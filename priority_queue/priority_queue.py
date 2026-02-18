@@ -125,7 +125,6 @@ class MinHeap:
             temp = self.data[smaller]
             self.data[smaller] = self.data[idx]
             self.data[idx] = temp
-
             idx = smaller
 
 # Once you have a min heap, the priority queue is pretty straightforward. 
